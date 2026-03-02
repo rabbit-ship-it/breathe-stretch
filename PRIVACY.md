@@ -81,7 +81,7 @@ If we ever change how the extension works in ways that affect privacy, we'll upd
 
 ## Contact
 
-Have a question or concern? Open an issue on the project repository. We're happy to explain anything in more detail.
+Breathe & Stretch is a project by Rabbit ShipItz. For questions, support, or to review the source code, please visit the [project page](https://github.com/rabbit-ship-it/breathe-stretch).
 
 ---
 

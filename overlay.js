@@ -106,43 +106,86 @@ if (!window.__bsOverlayLoaded) {
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-label", "Health break");
 
-    overlay.innerHTML = `
-      <div class="bs-card">
-        ${isTest ? '<button class="bs-dismiss-btn" aria-label="Dismiss">✕</button>' : ""}
-        <div class="bs-emoji"></div>
-        <h1 class="bs-title">Time to Breathe &amp; Stretch</h1>
-        <p class="bs-tip"></p>
-        <div class="bs-timer-ring">
-          <svg viewBox="0 0 100 100" class="bs-ring-svg" aria-hidden="true">
-            <circle class="bs-ring-track" cx="50" cy="50" r="44"/>
-            <circle class="bs-ring-progress" cx="50" cy="50" r="44"/>
-          </svg>
-          <span class="bs-countdown" aria-live="polite">${DURATION_SECONDS}</span>
-        </div>
-        <p class="bs-subtext">${isTest ? "Preview mode · press any key to dismiss" : "Overlay closes automatically"}</p>
-        <button class="bs-audio-btn" aria-label="Play calming bells">🎵 Tap for bells</button>
-      </div>
-    `;
-    // Set user-controlled text via textContent (prevents XSS)
-    overlay.querySelector(".bs-emoji").textContent = tip.emoji;
-    overlay.querySelector(".bs-tip").textContent   = tip.text;
+    // Build DOM without innerHTML to satisfy Trusted Types CSP on strict host pages.
+    const SVG = "http://www.w3.org/2000/svg";
+
+    const card = document.createElement("div");
+    card.className = "bs-card";
+
+    if (isTest) {
+      const dismissBtn = document.createElement("button");
+      dismissBtn.className = "bs-dismiss-btn";
+      dismissBtn.setAttribute("aria-label", "Dismiss");
+      dismissBtn.textContent = "✕";
+      card.appendChild(dismissBtn);
+    }
+
+    const emojiEl = document.createElement("div");
+    emojiEl.className = "bs-emoji";
+    emojiEl.textContent = tip.emoji;
+    card.appendChild(emojiEl);
+
+    const titleEl = document.createElement("h1");
+    titleEl.className = "bs-title";
+    titleEl.textContent = "Time to Breathe & Stretch";
+    card.appendChild(titleEl);
+
+    const tipEl = document.createElement("p");
+    tipEl.className = "bs-tip";
+    tipEl.textContent = tip.text;
+    card.appendChild(tipEl);
+
+    const ringWrap = document.createElement("div");
+    ringWrap.className = "bs-timer-ring";
+
+    const svg = document.createElementNS(SVG, "svg");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("class", "bs-ring-svg");
+    svg.setAttribute("aria-hidden", "true");
+    const track = document.createElementNS(SVG, "circle");
+    track.setAttribute("class", "bs-ring-track");
+    track.setAttribute("cx", "50"); track.setAttribute("cy", "50"); track.setAttribute("r", "44");
+    const progress = document.createElementNS(SVG, "circle");
+    progress.setAttribute("class", "bs-ring-progress");
+    progress.setAttribute("cx", "50"); progress.setAttribute("cy", "50"); progress.setAttribute("r", "44");
+    svg.appendChild(track);
+    svg.appendChild(progress);
+    ringWrap.appendChild(svg);
+
+    const countdownEl = document.createElement("span");
+    countdownEl.className = "bs-countdown";
+    countdownEl.setAttribute("aria-live", "polite");
+    countdownEl.textContent = DURATION_SECONDS;
+    ringWrap.appendChild(countdownEl);
+    card.appendChild(ringWrap);
+
+    const subtextEl = document.createElement("p");
+    subtextEl.className = "bs-subtext";
+    subtextEl.textContent = isTest ? "Preview mode · press any key to dismiss" : "Overlay closes automatically";
+    card.appendChild(subtextEl);
+
+    const audioBtn = document.createElement("button");
+    audioBtn.className = "bs-audio-btn";
+    audioBtn.setAttribute("aria-label", "Play calming bells");
+    audioBtn.textContent = "🎵 Tap for bells";
+    card.appendChild(audioBtn);
+
+    overlay.appendChild(card);
 
     document.body.appendChild(overlay);
     overlay.focus();
 
     // Ring countdown
-    const circle        = overlay.querySelector(".bs-ring-progress");
     const circumference = 2 * Math.PI * 44;
-    circle.style.strokeDasharray  = circumference;
-    circle.style.strokeDashoffset = 0;
+    progress.style.strokeDasharray  = circumference;
+    progress.style.strokeDashoffset = 0;
 
-    const countdownEl = overlay.querySelector(".bs-countdown");
     let remaining = DURATION_SECONDS;
 
     const interval = setInterval(() => {
       remaining -= 1;
       countdownEl.textContent = remaining;
-      circle.style.strokeDashoffset = circumference * (1 - remaining / DURATION_SECONDS);
+      progress.style.strokeDashoffset = circumference * (1 - remaining / DURATION_SECONDS);
       if (remaining <= 0) {
         clearInterval(interval);
         dismissOverlay(overlay);
@@ -155,7 +198,7 @@ if (!window.__bsOverlayLoaded) {
     window.addEventListener("keydown", blockKeys, true);
 
     if (isTest) {
-      const dismissBtn = overlay.querySelector(".bs-dismiss-btn");
+      const dismissBtn = card.querySelector(".bs-dismiss-btn");
       if (dismissBtn) dismissBtn.addEventListener("click", () => dismissOverlay(overlay));
     }
 

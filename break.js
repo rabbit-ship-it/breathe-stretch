@@ -23,7 +23,7 @@ async function popPendingOverlay() {
 
 (async () => {
   const data = await popPendingOverlay();
-  if (!data || !window.bsShowOverlay) return;
+  if (!data || !data.tip || !window.bsShowOverlay) return;
 
   window.bsShowOverlay(data.tip, data.audioEnabled, data.isTest);
 

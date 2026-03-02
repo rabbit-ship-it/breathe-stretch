@@ -110,6 +110,9 @@ async function sendToActiveTab(message) {
     return;
   }
 
+  // Warn toasts on restricted pages can be silently skipped — only overlays need the fallback.
+  if (message.type !== "SHOW_OVERLAY") return;
+
   // Active tab is a restricted page — stash payload and open a break page.
   const [activeTab] = tabs;
   const payload = {

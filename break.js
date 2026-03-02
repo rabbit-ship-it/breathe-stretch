@@ -16,7 +16,7 @@ async function popPendingOverlay() {
 
   const data = result?.pendingOverlay;
   store.remove("pendingOverlay").catch(() => {});          // clear immediately
-  if (!data) return null;
+  if (!data || !data.tip) return null;
   if (Date.now() - data.createdAt > 120_000) return null;  // 2-minute TTL
   return data;
 }

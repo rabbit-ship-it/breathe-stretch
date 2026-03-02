@@ -98,6 +98,7 @@ if (!window.__bsOverlayLoaded) {
   }
 
   function showOverlay(tip, audioEnabled, isTest = false) {
+    if (!tip?.emoji) return;
     if (document.getElementById(OVERLAY_ID)) return;
 
     const overlay = document.createElement("div");

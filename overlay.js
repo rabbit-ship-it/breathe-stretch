@@ -98,7 +98,11 @@ if (!window.__bsOverlayLoaded) {
   }
 
   function showOverlay(tip, audioEnabled, isTest = false) {
-    if (!tip?.emoji) return;
+    // Normalise tip — if missing or malformed, use a safe default.
+    const safeTip = (tip && typeof tip.emoji === "string" && typeof tip.text === "string")
+      ? tip
+      : { emoji: "🧘", text: "Take a slow breath." };
+
     if (document.getElementById(OVERLAY_ID)) return;
 
     const overlay = document.createElement("div");
@@ -123,7 +127,7 @@ if (!window.__bsOverlayLoaded) {
 
     const emojiEl = document.createElement("div");
     emojiEl.className = "bs-emoji";
-    emojiEl.textContent = tip.emoji;
+    emojiEl.textContent = safeTip.emoji;
     card.appendChild(emojiEl);
 
     const titleEl = document.createElement("h1");
@@ -133,7 +137,7 @@ if (!window.__bsOverlayLoaded) {
 
     const tipEl = document.createElement("p");
     tipEl.className = "bs-tip";
-    tipEl.textContent = tip.text;
+    tipEl.textContent = safeTip.text;
     card.appendChild(tipEl);
 
     const ringWrap = document.createElement("div");

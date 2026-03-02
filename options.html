@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Breathe & Stretch — Options</title>
+  <link rel="stylesheet" href="options.css" />
+  <link rel="stylesheet" href="overlay.css" />
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>🧘 Breathe & Stretch</h1>
+      <p>Make it yours. Every setting here helps build a calmer, healthier you.</p>
+      <div class="next-break-bar">
+        <span>Time until your next break</span>
+        <div class="next-break-right">
+          <span class="next-break-time" id="nextBreakTimer">—</span>
+          <button id="testOverlayBtn">Preview</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 1: Zen Garden ───────────────────────────────────────── -->
+    <div class="section-label">🌸 Your Zen Garden</div>
+    <div class="zen-card">
+      <div class="zen-flower-wrap">
+        <span class="zen-flower" id="zenFlower">🌰</span>
+      </div>
+      <p class="zen-message" id="zenMessage">Complete your first break to plant a seed!</p>
+      <div class="zen-stats">
+        <div class="zen-stat">
+          <span class="zen-number" id="breaksCount">0</span>
+          <span class="zen-label">Breaks</span>
+        </div>
+        <div class="zen-divider">·</div>
+        <div class="zen-stat">
+          <span class="zen-number" id="minutesCount">0</span>
+          <span class="zen-label">Mindful min</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 2: Extension Icon ──────────────────────────────────── -->
+    <div class="section-label">✨ Extension Icon</div>
+    <div class="icon-grid" id="iconGrid">
+      <!-- injected by options.js -->
+    </div>
+
+    <!-- ── Section 3: Affirmations ────────────────────────────────────── -->
+    <div class="section-label">💬 Your Affirmations</div>
+    <div class="affirmations-card">
+      <div class="affirmation-list" id="affirmationList"></div>
+      <div class="affirmation-input-row">
+        <textarea id="newAffirmation" placeholder="e.g. Smile — you're doing great."></textarea>
+        <button id="addAffirmationBtn">Add</button>
+      </div>
+    </div>
+
+    <!-- ── Section 4: Atmospheric Sound ──────────────────────────────── -->
+    <div class="section-label">🔔 Atmospheric Sound</div>
+    <div class="audio-card">
+      <div class="audio-row">
+        <div>
+          <div class="audio-title">Tibetan Singing Bowl</div>
+          <div class="hint">A soft synth bell tone plays 3 times during each break.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="audioToggle" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- ── Section 5: Meeting Detection ───────────────────────────────── -->
+    <div class="section-label">🤝 Meeting Detection</div>
+    <div class="audio-card">
+      <div class="audio-row">
+        <div>
+          <div class="audio-title">Scan all windows</div>
+          <div class="hint">Check every open tab for Zoom, Meet, or Teams — not just the active window.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="scanAllWindows" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast">Saved!</div>
+  <script src="overlay.js"></script>
+  <script src="content.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breathe &amp; Stretch — Screen break reminders for Chrome</title>
+  <meta name="description" content="A free Chrome extension that reminds you to breathe, stretch, and rest your eyes every 20 minutes. No account. No data collected. Just a calmer you." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0f172a;
+      --surface: #1e293b;
+      --border:  rgba(255,255,255,0.07);
+      --text:    #e2e8f0;
+      --muted:   #64748b;
+      --dim:     #475569;
+      --accent:  #38bdf8;
+      --gold:    #facc15;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ─────────────────────────────────────────────────────────────────── */
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .nav-brand {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .nav-links a { color: var(--muted); transition: color 0.15s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ────────────────────────────────────────────────────────────────── */
+
+    .hero {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 100px 24px 80px;
+      text-align: center;
+    }
+
+    .hero-bowl {
+      font-size: 72px;
+      line-height: 1;
+      margin-bottom: 28px;
+      animation: sway 5s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-3deg); }
+      50%       { transform: rotate(3deg);  }
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      color: #f1f5f9;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px 28px;
+      border-radius: 12px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); text-decoration: none; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px 28px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.2); text-decoration: none; }
+
+    /* ── Features ────────────────────────────────────────────────────────────── */
+
+    .section {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 24px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+    }
+
+    .feature-card .icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Privacy note ─────────────────────────────────────────────────────── */
+
+    .privacy-note {
+      background: linear-gradient(135deg, #0c1f12, #0f2a1a);
+      border: 1px solid rgba(74, 222, 128, 0.15);
+      border-radius: 20px;
+      padding: 28px 32px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .privacy-note .check-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .privacy-note h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #4ade80;
+      margin-bottom: 6px;
+    }
+
+    .privacy-note p {
+      font-size: 13px;
+      color: #6aab80;
+      line-height: 1.6;
+    }
+
+    /* ── Legal docs ──────────────────────────────────────────────────────────── */
+
+    .doc-section {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+      scroll-margin-top: 72px;
+    }
+
+    .doc-section h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #f1f5f9;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .doc-updated {
+      font-size: 12px;
+      color: var(--dim);
+      margin-bottom: 32px;
+    }
+
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+    }
+
+    .doc-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 24px 0 8px;
+    }
+
+    .doc-card h3:first-child { margin-top: 0; }
+
+    .doc-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .doc-card table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 12px 0 8px;
+    }
+
+    .doc-card th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--dim);
+      padding: 6px 12px 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .doc-card td {
+      padding: 10px 12px 10px 0;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: top;
+    }
+
+    .doc-card td code {
+      font-family: "SF Mono", ui-monospace, Menlo, monospace;
+      font-size: 12px;
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .doc-card ul {
+      list-style: none;
+      margin: 8px 0;
+    }
+
+    .doc-card ul li {
+      font-size: 14px;
+      color: var(--muted);
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .doc-card ul li::before {
+      content: "·";
+      position: absolute;
+      left: 6px;
+      color: var(--dim);
+    }
+
+    .doc-card ul li.no-item { color: #475569; }
+    .doc-card ul li.no-item::before { content: "❌"; left: 0; font-size: 11px; top: 5px; }
+
+    .doc-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────────────── */
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--dim);
+    }
+
+    footer a { color: var(--dim); }
+    footer a:hover { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ────────────────────────────────────────────────────────────────── -->
+  <nav>
+    <span class="nav-brand">🧘 Breathe &amp; Stretch</span>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#privacy">Privacy</a></li>
+      <li><a href="#terms">Terms</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Hero ───────────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <span class="hero-bowl">🪬</span>
+    <h1>A calmer day,<br /><span>20 minutes at a time.</span></h1>
+    <p>Breathe &amp; Stretch is a free Chrome extension that gives you a gentle 30-second break every 20 minutes — no account, no data, no distractions.</p>
+    <div class="hero-actions">
+      <a href="https://chrome.google.com/webstore" class="btn-primary">
+        ⬇ Add to Chrome — it's free
+      </a>
+      <a href="https://github.com/yourusername/breathe-and-stretch" class="btn-ghost">
+        View source
+      </a>
+    </div>
+  </section>
+
+  <!-- ── Features ───────────────────────────────────────────────────────────── -->
+  <section class="section" id="features">
+    <p class="section-title">What's inside</p>
+    <div class="features">
+      <div class="feature-card">
+        <span class="icon">⏱</span>
+        <h3>Smart 20-min timer</h3>
+        <p>A calming full-screen overlay appears every 20 minutes with a breathing or stretching tip.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🤝</span>
+        <h3>Meeting-aware</h3>
+        <p>Smart Pause detects Zoom, Google Meet, and Teams tabs and delays your break by 5 minutes.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🔔</span>
+        <h3>Tibetan singing bowl</h3>
+        <p>A synthesised bell tone plays softly at the start of each break to signal your moment of calm.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🌸</span>
+        <h3>Zen Garden</h3>
+        <p>Watch your garden grow as you complete breaks. A tiny seed blossoms into full bloom over time.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">💬</span>
+        <h3>Your affirmations</h3>
+        <p>Add your own personal reminders and they'll mix into the break rotation alongside the defaults.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">✨</span>
+        <h3>Custom toolbar icon</h3>
+        <p>Choose from a set of calm emoji icons for your toolbar so the extension always feels like yours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Privacy notice ─────────────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="privacy-note">
+      <span class="check-icon">🔒</span>
+      <div>
+        <h3>Zero data collected — ever.</h3>
+        <p>Breathe &amp; Stretch makes no network requests, has no analytics, and sends nothing to any server. Your settings live in Chrome's own sync storage. We don't even have a server to send data to.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Privacy Policy ─────────────────────────────────────────────────────── -->
+  <section class="doc-section" id="privacy">
+    <h2>Privacy Policy</h2>
+    <p class="doc-updated">Last updated: March 2026</p>
+
+    <div class="doc-card">
+      <h3>The short version</h3>
+      <p><strong style="color:#f1f5f9;">Breathe &amp; Stretch never collects, transmits, or shares any data about you.</strong> Everything stays on your device, always.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>What data is stored, and where</h3>
+      <p>All settings and progress are saved using Chrome's built-in <code>chrome.storage.sync</code> API. This means your preferences sync across your own Chrome profile (the same way bookmarks do) — but are never sent to us, because we don't have a server.</p>
+      <table>
+        <thead>
+          <tr><th>Key</th><th>What it holds</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>iconChoice</code></td><td>Your chosen toolbar emoji</td><td>Remembers your icon preference</td></tr>
+          <tr><td><code>audioEnabled</code></td><td><code>true</code> / <code>false</code></td><td>Whether the singing bowl plays</td></tr>
+          <tr><td><code>scanAllWindows</code></td><td><code>true</code> / <code>false</code></td><td>Meeting detection scope</td></tr>
+          <tr><td><code>customTips</code></td><td>Your personal affirmations (plain text)</td><td>Mixes into your break rotation</td></tr>
+          <tr><td><code>breaksCompleted</code></td><td>A count (integer)</td><td>Powers the Zen Garden</td></tr>
+          <tr><td><code>totalMindfulnessSeconds</code></td><td>Seconds (integer)</td><td>Powers the "Mindful min" stat</td></tr>
+        </tbody>
+      </table>
+      <p>Nothing else is stored. There are no user IDs, no device identifiers, no timestamps.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>The <code>tabs</code> permission — why we need it and what we do with it</h3>
+      <p>When you enable <strong>Smart Pause</strong>, the extension checks whether you're in a video call before showing a break overlay. To do this, it uses Chrome's <code>tabs</code> permission to read the URLs of your open tabs.</p>
+      <p>Here is the complete list of what we look for:</p>
+      <ul>
+        <li>zoom.us</li>
+        <li>meet.google.com</li>
+        <li>teams.microsoft.com</li>
+        <li>teams.live.com</li>
+      </ul>
+      <p>That's it. The check happens entirely <strong>locally, inside your browser</strong>, using a simple string match. No URLs, tab titles, page contents, or any other browsing data are ever logged, stored, or sent anywhere. The result (meeting detected: yes/no) is used only to decide whether to delay the break by 5 minutes.</p>
+      <p>You can turn this off entirely in Settings → "Scan all windows." When disabled, the extension doesn't query any tabs at all.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>Permissions we do NOT request</h3>
+      <ul>
+        <li class="no-item">No <code>history</code> — we never read your browsing history</li>
+        <li class="no-item">No <code>cookies</code> — we never touch cookies</li>
+        <li class="no-item">No <code>webRequest</code> — we never intercept network traffic</li>
+        <li class="no-item">No <code>scripting</code> — we use manifest-declared content scripts only</li>
+        <li class="no-item">No <code>identity</code> — we never ask you to sign in</li>
+        <li class="no-item">No remote code — every line of code ships in the extension package</li>
+      </ul>
+
+      <hr class="doc-divider" />
+
+      <h3>Third-party services</h3>
+      <p>None. Breathe &amp; Stretch makes zero network requests. There is no analytics SDK, no crash reporter, no ad network, no CDN. The extension works entirely offline.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>Children's privacy</h3>
+      <p>Breathe &amp; Stretch does not collect any personal information from anyone, including children under 13.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>Changes to this policy</h3>
+      <p>If we ever change how the extension works in ways that affect privacy, we'll update this page and bump the extension version. You can always review the full source code in the extension package.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>Contact</h3>
+      <p>Have a question or concern? Open an issue on the project repository. We're happy to explain anything in more detail.</p>
+    </div>
+  </section>
+
+  <!-- ── Terms of Use ───────────────────────────────────────────────────────── -->
+  <section class="doc-section" id="terms">
+    <h2>Terms of Use</h2>
+    <p class="doc-updated">Last updated: March 2026</p>
+
+    <div class="doc-card">
+      <p>Breathe &amp; Stretch is a free, open wellness tool designed to help you take regular breaks from your screen. These terms are intentionally simple.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>Using the extension</h3>
+      <p>You're welcome to install and use Breathe &amp; Stretch for personal or professional purposes at no cost. The extension is provided as-is, with no account required.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>Not medical advice</h3>
+      <p>Breathe &amp; Stretch offers gentle reminders to stretch, breathe, and rest your eyes. These are general wellness suggestions — they are <strong style="color:#f1f5f9;">not</strong> medical advice, diagnosis, or treatment. If you have a health condition that affects your ability to follow any of the suggested exercises, please consult a qualified healthcare professional.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>No warranty</h3>
+      <p>The extension is provided "as is" without warranty of any kind. We make no guarantees about uptime, compatibility with future Chrome versions, or fitness for any particular purpose. We're a small project, not a corporation with a legal department.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>No liability</h3>
+      <p>To the fullest extent permitted by applicable law, the developers of Breathe &amp; Stretch are not liable for any damages arising from your use of the extension, including but not limited to lost productivity, missed meetings (the Smart Pause feature helps, but isn't perfect!), or any other indirect or incidental harm.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>Your data</h3>
+      <p>We don't collect any. See the <a href="#privacy">Privacy Policy</a> for the full picture.</p>
+
+      <hr class="doc-divider" />
+
+      <h3>Changes</h3>
+      <p>We may update these terms as the extension evolves. Continued use after an update means you're comfortable with the changes. We'll always keep both documents in the extension package so you can review them at any time.</p>
+
+      <hr class="doc-divider" />
+
+      <p style="color:#475569;font-size:13px;">No lengthy legalese. Just a small tool that wants you to breathe a little easier. 🌿</p>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+  <footer>
+    <p>🧘 Breathe &amp; Stretch &mdash; free &amp; open source &mdash;
+      <a href="#privacy">Privacy</a> &middot;
+      <a href="#terms">Terms</a> &middot;
+      <a href="https://github.com/yourusername/breathe-and-stretch">GitHub</a>
+    </p>
+  </footer>
+
+</body>
+</html>

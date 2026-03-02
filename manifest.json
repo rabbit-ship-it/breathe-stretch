@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Breathe & Stretch",
+  "version": "1.0.0",
+  "description": "Every 20 minutes, take a 30-second health break with a calming full-screen reminder.",
+  "permissions": [
+    "alarms",
+    "tabs",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["overlay.js", "content.js"],
+      "css": ["overlay.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16":  "images/bowl-16.png",
+    "32":  "images/bowl-32.png",
+    "48":  "images/bowl-48.png",
+    "128": "images/bowl-128.png"
+  },
+  "action": {
+    "default_title": "Breathe & Stretch",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}

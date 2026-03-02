@@ -1,0 +1,210 @@
+/* ============================================================
+   Breathe & Stretch — Overlay Styles
+   All selectors are prefixed with "bs-" to avoid collisions.
+   ============================================================ */
+
+#breathe-stretch-overlay {
+  /* Cover everything */
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647; /* max z-index */
+
+  /* Frosted glass backdrop */
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  /* Block ALL interaction with the underlying page */
+  pointer-events: all;
+
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Entrance animation */
+  animation: bs-fade-in 0.4s ease both;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+/* Fade-out class toggled by JS before removal */
+#breathe-stretch-overlay.bs-fade-out {
+  animation: bs-fade-out 0.4s ease both;
+}
+
+/* ---------- Card ---------- */
+.bs-card {
+  position: relative;
+  background: linear-gradient(145deg, #1e293b, #0f172a);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+  padding: 48px 56px;
+  max-width: 480px;
+  width: 90vw;
+  text-align: center;
+  color: #f1f5f9;
+}
+
+/* ---------- Test-mode dismiss button ---------- */
+.bs-dismiss-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  pointer-events: all;
+}
+.bs-dismiss-btn:hover { background: rgba(255, 255, 255, 0.12); color: #e2e8f0; }
+
+/* ---------- Emoji ---------- */
+.bs-emoji {
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: 16px;
+  /* Gentle float */
+  animation: bs-float 3s ease-in-out infinite;
+}
+
+/* ---------- Title ---------- */
+.bs-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #e2e8f0;
+  margin: 0 0 12px;
+}
+
+/* ---------- Tip text ---------- */
+.bs-tip {
+  font-size: 18px;
+  font-weight: 400;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0 0 32px;
+}
+
+/* ---------- Ring timer ---------- */
+.bs-timer-ring {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+}
+
+.bs-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* start from top */
+}
+
+.bs-ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 6;
+}
+
+.bs-ring-progress {
+  fill: none;
+  stroke: #38bdf8; /* sky-400 */
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.bs-countdown {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+/* ---------- Sub-text ---------- */
+.bs-subtext {
+  font-size: 13px;
+  color: rgba(148, 163, 184, 0.5);
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Audio button (shown only when autoplay is blocked) ---------- */
+.bs-audio-btn {
+  display: none; /* shown via JS when needed */
+  margin: 16px auto 0;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 999px;
+  color: #38bdf8;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 18px;
+  cursor: pointer;
+  align-items: center;
+  gap: 6px;
+  pointer-events: all;
+  transition: background 0.15s;
+}
+.bs-audio-btn:hover { background: rgba(56, 189, 248, 0.2); }
+
+/* ---------- Warning toast (non-blocking, bottom of screen) ---------- */
+#bs-warn-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(14px);
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 22px;
+  border-radius: 999px;
+  z-index: 2147483646; /* one below the overlay */
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+#bs-warn-toast.bs-warn-toast-show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================================
+   Keyframes
+   ============================================================ */
+
+@keyframes bs-fade-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bs-fade-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.97); }
+}
+
+@keyframes bs-float {
+  0%, 100% { transform: translateY(0);    }
+  50%       { transform: translateY(-8px); }
+}

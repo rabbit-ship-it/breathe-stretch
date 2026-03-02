@@ -1,0 +1,9 @@
+# Build artifacts
+breathe-and-stretch-*.zip
+
+# Dev utilities
+generate_icons.py
+
+# IDE / tool internals
+.claude/
+.DS_Store

@@ -193,35 +193,14 @@
     /* ── Privacy note ────────────────────────────────────────────────────────── */
 
     .privacy-note {
-      background: linear-gradient(135deg, #0c1f12, #0f2a1a);
-      border: 1px solid rgba(74, 222, 128, 0.15);
-      border-radius: 20px;
-      padding: 28px 32px;
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-    }
-
-    .privacy-note .check-icon {
-      font-size: 24px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .privacy-note h3 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #4ade80;
-      margin-bottom: 6px;
-    }
-
-    .privacy-note p {
       font-size: 13px;
-      color: #6aab80;
-      line-height: 1.6;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.7;
     }
 
-    .privacy-note a { color: #4ade80; }
+    .privacy-note a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+    .privacy-note a:hover { color: var(--text); }
 
     /* ── Footer ──────────────────────────────────────────────────────────────── */
 
@@ -303,13 +282,7 @@
 
   <!-- ── Privacy notice ─────────────────────────────────────────────────────── -->
   <section class="section">
-    <div class="privacy-note">
-      <span class="check-icon">🔒</span>
-      <div>
-        <h3>Zero data collected — ever.</h3>
-        <p>Breathe &amp; Stretch makes no network requests, has no analytics, and sends nothing to any server. Your settings live in Chrome's own sync storage. We don't even have a server to send data to. <a href="https://github.com/rabbit-ship-it/breathe-stretch/blob/main/PRIVACY.md">Read the full privacy policy →</a></p>
-      </div>
-    </div>
+    <p class="privacy-note">🔒 Zero data collected — no accounts, no analytics, no network requests. <a href="https://github.com/rabbit-ship-it/breathe-stretch/blob/main/PRIVACY.md">Privacy policy →</a></p>
   </section>
 
   <!-- ── Footer ─────────────────────────────────────────────────────────────── -->

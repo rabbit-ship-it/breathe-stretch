@@ -79,7 +79,19 @@ function buildIconGrid(currentKey) {
   ICON_OPTIONS.forEach(({ key, emoji, label }) => {
     const card = document.createElement("div");
     card.className = "icon-card" + (key === currentKey ? " selected" : "");
-    card.innerHTML = `<span class="check">✓</span><span class="emoji">${emoji}</span><span class="name">${label}</span>`;
+
+    const check = document.createElement("span");
+    check.className = "check";
+    check.textContent = "✓";
+    const emojiSpan = document.createElement("span");
+    emojiSpan.className = "emoji";
+    emojiSpan.textContent = emoji;
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "name";
+    nameSpan.textContent = label;
+    card.appendChild(check);
+    card.appendChild(emojiSpan);
+    card.appendChild(nameSpan);
     card.addEventListener("click", () => {
       document.querySelectorAll(".icon-card").forEach(c => c.classList.remove("selected"));
       card.classList.add("selected");

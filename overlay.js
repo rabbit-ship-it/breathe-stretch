@@ -91,10 +91,18 @@ if (!window.__bsOverlayLoaded) {
     if (overlay._cleanup)      overlay._cleanup();
     if (overlay._audioCleanup) overlay._audioCleanup();
     overlay.classList.add("bs-fade-out");
-    overlay.addEventListener("animationend", () => {
+
+    // animationend may never fire if animations are disabled (prefers-reduced-motion,
+    // OS accessibility settings, etc.). The timeout is a guaranteed fallback.
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
       overlay.remove();
       window.dispatchEvent(new Event("bs:overlayClosed"));
-    }, { once: true });
+    };
+    overlay.addEventListener("animationend", finish, { once: true });
+    setTimeout(finish, 600); // slightly longer than the 0.4s CSS animation
   }
 
   function showOverlay(tip, audioEnabled, isTest = false) {

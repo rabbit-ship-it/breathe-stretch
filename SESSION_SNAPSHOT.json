@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-04T22:00:00Z",
+  "generated_at": "2026-03-04T23:00:00Z",
 
   "repo_structure": {
     "images": {
@@ -27,6 +27,7 @@
     "AI_CONTEXT.md": null,
     "NEXT_TASK.md": null,
     "REPO_DIGEST.md": null,
+    "SESSION_SNAPSHOT.json": null,
     "zip-build.sh": null,
     "generate_icons.py": null
   },
@@ -113,6 +114,10 @@
     {
       "path": "NEXT_TASK.md",
       "description": "On handoff-v1 branch. Describes the current objective: Chrome Web Store submission and updating index.html with the live store URL once approved."
+    },
+    {
+      "path": "SESSION_SNAPSHOT.json",
+      "description": "This file. Machine-readable portable development snapshot for AI handoff. On handoff-v1 branch."
     }
   ],
 
@@ -220,5 +225,11 @@
 
   "next_steps": "See NEXT_TASK.md (on the handoff-v1 branch) for the full objective, requirements, constraints, and success criteria. In summary: run ./zip-build.sh, submit breathe-and-stretch-1.0.0.zip to the Chrome Web Store Developer Dashboard, complete the store listing, and update the placeholder CTA URL in index.html once the extension is live.",
 
-  "uncommitted_changes_summary": "One untracked file on the main branch: REPO_DIGEST.md (generated this session — a single-file consolidation of all extension source files for AI ingestion). No modified tracked files. No staged changes."
+  "manifest_verification": {
+    "externally_connectable": "NOT PRESENT — extension does not expose a messaging endpoint to external pages or extensions.",
+    "web_accessible_resources": "NOT PRESENT — no extension resources are intentionally web-accessible. overlay.js and overlay.css are injected by the manifest, not fetched by page scripts.",
+    "loaded_unpacked_path": "repository root — no dist/ or build/ directory; source files are loaded directly by Chrome"
+  },
+
+  "uncommitted_changes_summary": "Working tree is clean on handoff-v1 after this refresh commit. REPO_DIGEST.md, SESSION_SNAPSHOT.json, AI_CONTEXT.md, and NEXT_TASK.md are all tracked on handoff-v1. On the main branch, REPO_DIGEST.md remains untracked (it is a handoff artifact, not an extension source file)."
 }

@@ -37,6 +37,10 @@ health-ext/
 ├── PRIVACY.md            # Privacy policy (rendered at GitHub Pages)
 ├── TERMS.md              # Terms of service
 ├── CODEBASE.md           # Human-readable architecture reference
+├── AI_CONTEXT.md         # This file — AI handoff architecture reference
+├── REPO_DIGEST.md        # All extension source files consolidated for AI ingestion
+├── SESSION_SNAPSHOT.json # Machine-readable project state snapshot (handoff-v1 branch)
+├── NEXT_TASK.md          # Current development objective (handoff-v1 branch)
 ├── zip-build.sh          # Builds breathe-and-stretch-<version>.zip for CWS upload
 └── generate_icons.py     # One-off Python/Pillow script that produced the PNG icons
 ```
@@ -223,6 +227,16 @@ No npm, no bundler, no transpilation. Load unpacked directly from the project ro
 
 ---
 
+## Source of truth for loading
+
+- **Loaded-unpacked path**: the repository root (`/health-ext/`) — there is no `dist/`, `build/`, or compilation step.
+- **Build command**: `./zip-build.sh` produces the Chrome Web Store submission artifact (`breathe-and-stretch-<version>.zip`). It is a packaging step only — it zips the source files as-is. It does not transform or transpile any code.
+- **Generated files**: `images/bowl-{16,32,48,128}.png` were generated once by `generate_icons.py` (Python/Pillow, 4× supersampling + LANCZOS downscale) and committed. They are static assets, not regenerated at build time.
+- **Source-of-truth files** (edited directly, never generated): `manifest.json`, `background.js`, `overlay.js`, `overlay.css`, `content.js`, `break.html`, `break.js`, `popup.html`, `popup.js`, `options.html`, `options.js`, `options.css`.
+- **Not loaded by Chrome** (excluded from zip): `index.html`, `PRIVACY.md`, `TERMS.md`, `CODEBASE.md`, `AI_CONTEXT.md`, `REPO_DIGEST.md`, `SESSION_SNAPSHOT.json`, `NEXT_TASK.md`, `zip-build.sh`, `generate_icons.py`, `.git/`, `.claude/`.
+
+---
+
 ## Known Limitations / Technical Debt
 
 - **`chrome.storage.session` fallback**: On Chrome <102 the payload falls back to `chrome.storage.local`, which persists across browser restarts. A stale payload is mitigated by the 2-minute TTL check in `break.js`, but the local entry will linger until a restart triggers the code path that clears it.
@@ -235,3 +249,11 @@ No npm, no bundler, no transpilation. Load unpacked directly from the project ro
 ## Next Development Task
 
 See [`NEXT_TASK.md`](./NEXT_TASK.md).
+
+---
+
+## Schema Notes
+
+- **`externally_connectable`**: Not declared in `manifest.json`. The extension does not expose a messaging endpoint to external web pages or other extensions. No action required.
+- **`web_accessible_resources`**: Not declared in `manifest.json`. No extension resources are intentionally exposed to web pages (overlay.js/overlay.css are injected by the manifest, not fetched by page scripts). No action required.
+- **`host_permissions`**: Not declared as a separate key. Content-script URL matching (`https://*/*`, `http://*/*`) is handled via the `content_scripts.matches` array, which is sufficient for MV3 injection without needing explicit `host_permissions` for this use case.

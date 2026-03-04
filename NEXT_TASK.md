@@ -1,6 +1,6 @@
 ---
 handoff_version: v1
-generated_at: 2026-03-04T21:47:23Z
+generated_at: 2026-03-04T23:00:00Z
 ---
 
 ## Current Objective
@@ -49,3 +49,6 @@ The extension is feature-complete and submission-ready. A build script (`zip-bui
 | `index.html` | Contains the placeholder store URL that must be updated post-approval |
 | `images/` | Verify all four PNG icons render correctly before submission |
 | `TERMS.md` | May be required or useful for the store listing's additional URLs field |
+| `AI_CONTEXT.md` | Full architecture reference — read before making any code changes |
+| `REPO_DIGEST.md` | All extension source files in one document — useful for fast AI ingestion |
+| `SESSION_SNAPSHOT.json` | Machine-readable snapshot of project state, architecture, and known issues |

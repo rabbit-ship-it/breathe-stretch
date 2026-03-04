@@ -1,3 +1,6 @@
+// De-duplicate BREAK_COMPLETED messages within a single service-worker lifetime.
+const seenSessions = new Set();
+
 const ALARM_NAME         = "breathe-stretch-alarm";
 const WARN_ALARM_NAME    = "breathe-stretch-warn";
 const DELAYED_ALARM_NAME = "breathe-stretch-delayed";
@@ -180,16 +183,6 @@ async function triggerOverlayOrDelay(isTest = false) {
   const tip = allTips[Math.floor(Math.random() * allTips.length)];
 
   await sendToActiveTab({ type: "SHOW_OVERLAY", tip, audioEnabled, isTest });
-
-  // Increment stats only for real breaks
-  if (!isTest) {
-    const { breaksCompleted = 0, totalMindfulnessSeconds = 0 } =
-      await chrome.storage.sync.get({ breaksCompleted: 0, totalMindfulnessSeconds: 0 });
-    chrome.storage.sync.set({
-      breaksCompleted: breaksCompleted + 1,
-      totalMindfulnessSeconds: totalMindfulnessSeconds + 30
-    });
-  }
 }
 
 // ─── Alarm + message dispatch ─────────────────────────────────────────────────
@@ -205,4 +198,19 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type === "TRIGGER_NOW") triggerOverlayOrDelay(message.test === true);
   if (message.type === "SET_ICON")    setIconFromEmoji(ICON_EMOJIS[message.choice] ?? ICON_EMOJIS.meditator);
+
+  if (message.type === "BREAK_COMPLETED") {
+    // Ignore duplicates (e.g. content script + break.html both firing).
+    if (!message.sessionId || seenSessions.has(message.sessionId)) return;
+    seenSessions.add(message.sessionId);
+    // Trim the set so it doesn't grow unbounded across a long browser session.
+    if (seenSessions.size > 50) seenSessions.delete(seenSessions.values().next().value);
+
+    chrome.storage.sync.get({ breaksCompleted: 0, totalMindfulnessSeconds: 0 }, (data) => {
+      chrome.storage.sync.set({
+        breaksCompleted:         data.breaksCompleted + 1,
+        totalMindfulnessSeconds: data.totalMindfulnessSeconds + 30,
+      });
+    });
+  }
 });

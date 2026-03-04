@@ -193,6 +193,9 @@ if (!window.__bsOverlayLoaded) {
     progress.style.strokeDasharray  = circumference;
     progress.style.strokeDashoffset = 0;
 
+    // Unique ID for this overlay instance — used by background to de-dupe BREAK_COMPLETED.
+    const sessionId = Math.random().toString(36).slice(2);
+
     let remaining = DURATION_SECONDS;
 
     const interval = setInterval(() => {
@@ -201,6 +204,10 @@ if (!window.__bsOverlayLoaded) {
       progress.style.strokeDashoffset = circumference * (1 - remaining / DURATION_SECONDS);
       if (remaining <= 0) {
         clearInterval(interval);
+        // Only real, fully-elapsed breaks count toward the Zen Garden.
+        if (!isTest) {
+          chrome.runtime.sendMessage({ type: "BREAK_COMPLETED", sessionId }).catch(() => {});
+        }
         dismissOverlay(overlay);
       }
     }, 1000);

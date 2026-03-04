@@ -1,0 +1,224 @@
+{
+  "generated_at": "2026-03-04T22:00:00Z",
+
+  "repo_structure": {
+    "images": {
+      "bowl-16.png": null,
+      "bowl-32.png": null,
+      "bowl-48.png": null,
+      "bowl-128.png": null
+    },
+    "manifest.json": null,
+    "background.js": null,
+    "overlay.js": null,
+    "overlay.css": null,
+    "content.js": null,
+    "break.html": null,
+    "break.js": null,
+    "popup.html": null,
+    "popup.js": null,
+    "options.html": null,
+    "options.js": null,
+    "options.css": null,
+    "index.html": null,
+    "PRIVACY.md": null,
+    "TERMS.md": null,
+    "CODEBASE.md": null,
+    "AI_CONTEXT.md": null,
+    "NEXT_TASK.md": null,
+    "REPO_DIGEST.md": null,
+    "zip-build.sh": null,
+    "generate_icons.py": null
+  },
+
+  "project_summary": "Breathe & Stretch is a Chrome MV3 extension that promotes desk-worker wellness by displaying a full-screen 30-second break overlay every 20 minutes. Each break shows a randomised breathing or stretching tip, a countdown ring timer, and an optional synthesised Tibetan singing bowl tone. Completed breaks accumulate in a Zen Garden stat tracker. The extension makes zero network requests, collects no data, and requires no account.",
+
+  "key_files": [
+    {
+      "path": "manifest.json",
+      "description": "MV3 manifest. Declares permissions (alarms, tabs, storage), registers background.js as a service worker, injects overlay.js + content.js + overlay.css into all http/https pages, and defines the popup and options page."
+    },
+    {
+      "path": "background.js",
+      "description": "Service worker. Owns all alarm logic (20-min break alarm, 19-min warning alarm, 5-min meeting-delay alarm), meeting-tab detection, tip selection, active-tab messaging, restricted-tab fallback via break.html, dynamic emoji toolbar-icon rendering with OffscreenCanvas, and break-count persistence via chrome.storage.sync. Never touches the DOM."
+    },
+    {
+      "path": "overlay.js",
+      "description": "Shared UI module loaded both as a content script (by the manifest) and directly by break.html. Guarded by window.__bsOverlayLoaded. Exports window.bsShowOverlay and window.bsShowWarnToast. Builds the full-screen overlay with createElement/createElementNS only (no innerHTML) to satisfy Trusted Types CSP. Dispatches bs:overlayClosed when dismissed."
+    },
+    {
+      "path": "overlay.css",
+      "description": "Styles for the overlay (#breathe-stretch-overlay), card, ring timer, countdown, dismiss button, audio button, warning toast, and entrance/exit keyframe animations. All selectors are bs- prefixed. Injected by the manifest alongside overlay.js."
+    },
+    {
+      "path": "content.js",
+      "description": "Thin content-script router. Guarded by window.__bsContentLoaded. Listens for SHOW_OVERLAY and SHOW_WARN_TOAST messages from the background and delegates to window.bsShowOverlay?.() and window.bsShowWarnToast?.() with optional chaining."
+    },
+    {
+      "path": "break.html",
+      "description": "Fallback tab opened by background.js when the active tab is a restricted page (chrome://, edge://, etc.) that cannot receive content scripts. Loads overlay.js then break.js. Minimal dark background; no nav or chrome."
+    },
+    {
+      "path": "break.js",
+      "description": "Runs on break.html. Pops the pendingOverlay payload from chrome.storage.session (falls back to chrome.storage.local on Chrome <102), validates it (tip present, age <2 min), calls window.bsShowOverlay, and closes the tab on bs:overlayClosed."
+    },
+    {
+      "path": "popup.html",
+      "description": "220px toolbar popup. Contains a Preview Break button, a Customize & Stats button, and a statsLine element that shows the current Zen Garden flower + break count when breaksCompleted > 0."
+    },
+    {
+      "path": "popup.js",
+      "description": "Sends TRIGGER_NOW (test:true) on Preview click, opens the options page on Customize click, and reads breaksCompleted from sync storage to populate the zen stat line."
+    },
+    {
+      "path": "options.html",
+      "description": "Full-tab options page with five sections: Zen Garden, Extension Icon picker, Custom Affirmations, Atmospheric Sound toggle, and Meeting Detection toggle. Loads overlay.js + content.js so break previews work from the options page."
+    },
+    {
+      "path": "options.js",
+      "description": "Drives the options page. Manages Zen Garden display (6 flower stages), icon-picker grid (createElement, no innerHTML), affirmation CRUD (stored as newline-delimited string in customTips), audio toggle, scanAllWindows toggle, and a next-break countdown that refreshes every 30 seconds."
+    },
+    {
+      "path": "options.css",
+      "description": "Styles for the options page: header, next-break countdown bar, section labels, Zen Garden card with sway animation and stage-based font sizes, icon-picker grid, affirmation list/input, toggle switch, and save toast."
+    },
+    {
+      "path": "index.html",
+      "description": "GitHub Pages marketing landing page (not part of the Chrome extension bundle). Sticky nav, hero with CTA button (placeholder Chrome Web Store URL), 6-card features grid, muted privacy note, footer. Self-contained single-file HTML with inline CSS."
+    },
+    {
+      "path": "PRIVACY.md",
+      "description": "Privacy policy. States zero data collection, no network requests, no analytics. Includes Google Limited Use Disclosure. Hosted at https://rabbit-ship-it.github.io/breathe-stretch/ via GitHub Pages."
+    },
+    {
+      "path": "TERMS.md",
+      "description": "Terms of service. Covers disclaimer of warranties and limitation of liability for the free extension."
+    },
+    {
+      "path": "zip-build.sh",
+      "description": "Build script. Reads version from manifest.json and produces breathe-and-stretch-<version>.zip, excluding .git, .claude, node_modules, generate_icons.py, prior zips, and itself."
+    },
+    {
+      "path": "generate_icons.py",
+      "description": "One-off Python/Pillow script used to generate the four PNG icons in images/. Not included in the extension zip. Renders a gold singing bowl emoji at 4x supersampling then downscales with LANCZOS."
+    },
+    {
+      "path": "AI_CONTEXT.md",
+      "description": "Comprehensive architecture reference document. Covers all Chrome APIs, message types, storage schema, per-file responsibilities, known limitations, and build instructions. Primary handoff document for AI systems."
+    },
+    {
+      "path": "REPO_DIGEST.md",
+      "description": "Single-file consolidation of all extension source files as fenced code blocks. Intended for AI ingestion in one pass."
+    },
+    {
+      "path": "NEXT_TASK.md",
+      "description": "On handoff-v1 branch. Describes the current objective: Chrome Web Store submission and updating index.html with the live store URL once approved."
+    }
+  ],
+
+  "architecture_notes": {
+    "overview": "Standard Chrome MV3 architecture: a service worker (background.js) owns all scheduling and state; content scripts (overlay.js + content.js) handle UI injection into host pages; popup.html/popup.js and options.html/options.js are extension pages that communicate via the runtime message bus and chrome.storage.sync.",
+    "message_passing": {
+      "background_to_content": [
+        {
+          "type": "SHOW_OVERLAY",
+          "payload": "{ tip: { emoji, text }, audioEnabled: bool, isTest: bool }",
+          "handler": "content.js → window.bsShowOverlay()"
+        },
+        {
+          "type": "SHOW_WARN_TOAST",
+          "payload": "{ text: string }",
+          "handler": "content.js → window.bsShowWarnToast()"
+        }
+      ],
+      "content_to_background": [
+        {
+          "type": "BREAK_COMPLETED",
+          "payload": "{ sessionId: string }",
+          "sender": "overlay.js (when 30-second countdown reaches zero and isTest is false)",
+          "handler": "background.js increments breaksCompleted and totalMindfulnessSeconds in chrome.storage.sync; de-duplicates via seenSessions Set"
+        }
+      ],
+      "popup_to_background": [
+        {
+          "type": "TRIGGER_NOW",
+          "payload": "{ test: bool }",
+          "sender": "popup.js Preview Break button and options.js Preview button"
+        },
+        {
+          "type": "SET_ICON",
+          "payload": "{ choice: string }",
+          "sender": "options.js icon picker"
+        }
+      ]
+    },
+    "storage": {
+      "chrome.storage.sync": {
+        "breaksCompleted": "number — total fully-elapsed breaks",
+        "totalMindfulnessSeconds": "number — total seconds of break time (breaksCompleted × 30)",
+        "iconChoice": "string — key into ICON_EMOJIS map in background.js (default: 'meditator')",
+        "customTips": "string — newline-delimited user affirmations mixed into break tip pool",
+        "audioEnabled": "boolean — whether to play the synthesised singing bowl (default: false)",
+        "scanAllWindows": "boolean — meeting detection scans all windows vs active window only (default: true)"
+      },
+      "chrome.storage.session": "Ephemeral overlay payload { tip, audioEnabled, isTest, createdAt, nonce, openerTabId, openerWindowId } stashed by background.js when the active tab is restricted and break.html must be opened instead. Cleared by break.js on read. Falls back to chrome.storage.local on Chrome <102.",
+      "chrome.storage.local": "Fallback for session storage only (Chrome <102). Not used for any persistent user data."
+    },
+    "restricted_tab_fallback": "When sendToActiveTab() finds the active tab is not injectable (chrome://, edge://, about:, etc.), SHOW_OVERLAY payloads are stashed in chrome.storage.session and break.html is opened as a new tab. break.js pops the payload, validates it (tip present, age <2 min), shows the overlay, then auto-closes the tab on bs:overlayClosed. SHOW_WARN_TOAST is silently dropped for restricted tabs.",
+    "overlay_module_loading": "overlay.js is injected by the manifest before content.js on all http/https pages (run_at: document_idle). It is also loaded via a <script> tag in break.html and options.html. A window.__bsOverlayLoaded guard prevents double-initialisation.",
+    "alarm_schedule": {
+      "breathe-stretch-alarm": "Fires every 20 minutes → triggerOverlayOrDelay()",
+      "breathe-stretch-warn": "Fires every 19 minutes → triggerWarning() (SHOW_WARN_TOAST '1 minute away')",
+      "breathe-stretch-delayed": "One-shot, fires 5 minutes after meeting detection → triggerOverlayOrDelay()"
+    }
+  },
+
+  "permissions": [
+    {
+      "permission": "alarms",
+      "purpose": "Schedule the 20-minute break alarm, the 19-minute warning toast alarm, and the 5-minute meeting-delay alarm. Alarms survive service-worker restarts; setInterval/setTimeout do not."
+    },
+    {
+      "permission": "tabs",
+      "purpose": "Query the active tab URL to determine injectability and detect meeting tabs (Zoom, Google Meet, Teams). Also used by break.js to close the break.html fallback tab via chrome.tabs.getCurrent + chrome.tabs.remove. Required justification for CWS: 'Used solely to detect video-conferencing tabs (Zoom, Meet, Teams) to delay breaks during meetings, and to close the fallback break tab after it is dismissed. No tab content or browsing history is read or stored.'"
+    },
+    {
+      "permission": "storage",
+      "purpose": "chrome.storage.sync stores all user preferences and break statistics. chrome.storage.session stores the ephemeral overlay payload for the restricted-tab fallback. chrome.storage.local is a fallback for session storage on Chrome <102."
+    }
+  ],
+
+  "known_issues": [
+    {
+      "id": "stale-local-storage",
+      "severity": "low",
+      "description": "On Chrome <102, the overlay payload falls back to chrome.storage.local which persists across browser restarts. The 2-minute TTL check in break.js mitigates this, but the key may linger in local storage indefinitely if break.html is never opened again after a restart."
+    },
+    {
+      "id": "seenSessions-ephemeral",
+      "severity": "low",
+      "description": "The seenSessions Set in background.js lives only for the service-worker lifetime. A service-worker restart between a BREAK_COMPLETED message being sent and the Set being checked could theoretically allow a single break to be counted twice. This is rare and the impact is a one-count inflation."
+    },
+    {
+      "id": "no-interval-configurability",
+      "severity": "low",
+      "description": "The break interval is hard-coded as INTERVAL_MINUTES = 20 in background.js. There is no UI to change it. Adding a UI control would require clearing and recreating both alarms on save."
+    },
+    {
+      "id": "single-window-meeting-edge-case",
+      "severity": "low",
+      "description": "When scanAllWindows is false, meeting detection only checks the active tab in the current window. A meeting tab open in a background window will not trigger the delay."
+    },
+    {
+      "id": "placeholder-store-url",
+      "severity": "high",
+      "description": "The 'Add to Chrome' button in index.html links to https://chrome.google.com/webstore (a placeholder). This must be replaced with the real extension URL once the extension is approved on the Chrome Web Store."
+    }
+  ],
+
+  "in_progress_work": "None. The extension is feature-complete. All previously identified bugs (Trusted Types CSP blocking innerHTML, break count inflating on alarm fire, warn-toast fallback opening break.html with no tip, animationend not firing under prefers-reduced-motion, window.bsShowOverlay guard) have been resolved. The only remaining work is Chrome Web Store submission as described in NEXT_TASK.md.",
+
+  "next_steps": "See NEXT_TASK.md (on the handoff-v1 branch) for the full objective, requirements, constraints, and success criteria. In summary: run ./zip-build.sh, submit breathe-and-stretch-1.0.0.zip to the Chrome Web Store Developer Dashboard, complete the store listing, and update the placeholder CTA URL in index.html once the extension is live.",
+
+  "uncommitted_changes_summary": "One untracked file on the main branch: REPO_DIGEST.md (generated this session — a single-file consolidation of all extension source files for AI ingestion). No modified tracked files. No staged changes."
+}
